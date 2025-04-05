@@ -1,24 +1,21 @@
 "use client";
 
-import ButtonComponent from "@/components/button-component";
+import PermissionGuardApi from "@/components/auth/permission-protected-api";
+import PermissionGuard from "@/components/auth/permission-protected-components";
 import DashboardLayout from "@/components/dashboard-layout-component";
+import DashboardSection from "@/components/dashboard/dashboard-box";
+import MyLoader from "@/components/loader-components";
 import ModalCompoenent, {
   SuccessModalCompoenent,
 } from "@/components/modal-component";
 import CreateWorkOrder from "@/components/work-order/create-work-order";
 import CreateWorkRequest from "@/components/work-request/create-work-request";
 import { useDataPermission } from "@/context";
-import { BarChartIcon, WorkIcon } from "@/utils/svg";
-import { JSX, useEffect, useState } from "react";
-import WorkOrders from "../work-orders/page";
-import WorkRequests from "../work-requests/page";
-import { useRouter } from "next/navigation";
 import createAxiosInstance from "@/utils/api";
-import MyLoader from "@/components/loader-components";
 import formatCurrency from "@/utils/formatCurrency";
-import PermissionGuard from "@/components/auth/permission-protected-components";
-import PermissionGuardApi from "@/components/auth/permission-protected-api";
-import DashboardSection from "@/components/dashboard/dashboard-box";
+import { BarChartIcon } from "@/utils/svg";
+import { useRouter } from "next/navigation";
+import { JSX, useEffect, useState } from "react";
 
 function Dashboard() {
   const axiosInstance = createAxiosInstance();
@@ -29,8 +26,10 @@ function Dashboard() {
     setUser,
     userPermissions,
     userRoles,
+    userCompanies,
     setUserPermissions,
     setUserRoles,
+    setUserCompanies,
   } = useDataPermission();
 
   const [selectedWallet, setSelectedWallet] = useState<any>();
@@ -59,17 +58,28 @@ function Dashboard() {
   const getMe = async () => {
     const response = await axiosInstance.get("/auth/me");
     setUser(response.data.data.user);
-    const roles = response.data.data?.roles || [];
+    const roles = response.data.data?.user?.roles || [];
     setUserRoles(roles);
+    const companyRoles = response.data?.userCompanies?.roles || [];
+    setUserCompanies(response.data.data?.userCompanies);
     const allPermissions = roles
       .map((role: any) => role.permissions || []) // Extract permissions from each role
       .flat(); // Flatten the array of arrays
+    const allCompanyPermissions = companyRoles
+      .map((role: any) => role.permissions || []) // Extract permissions from each role
+      .flat(); // Flatten the array of arrays
     // Remove duplicate permissions using a Set
-    const uniquePermissions: Permission[] = Array.from(new Set(allPermissions));
+
+    const combinedPermissions = [...allPermissions, ...allCompanyPermissions];
+    const uniquePermissions: Permission[] = Array.from(
+      new Set(combinedPermissions)
+    );
     setUserPermissions(uniquePermissions);
+
+    console.log(uniquePermissions);
   };
 
-  const loading = !(user && userPermissions);
+  const loading = !(user && userPermissions && userCompanies);
 
   const [purchaseOrders, setPurchaseOrders] = useState<any>();
   const [overdueWorkOrders, setOverdueWorkOrders] = useState<any>();
@@ -564,8 +574,6 @@ function Dashboard() {
                 ) : null
               )}
             </div>
-
-
 
             {/* {workOrders?.length < 1 ? (
               <div className=" w-full rounded-lg bg-white my-8 flex flex-col items-center justify-center px-6 py-10">

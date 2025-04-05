@@ -2,20 +2,18 @@
 
 import PermissionGuard from "@/components/auth/permission-protected-components";
 import withPermissions from "@/components/auth/permission-protected-routes";
+import AvatarUploader from "@/components/company/upload-logo";
 import DashboardLayout from "@/components/dashboard-layout-component";
 import DynamicCreateForm from "@/components/dynamic-create-form";
 import TableComponent from "@/components/table-component";
 import CreateBulk from "@/components/user-management/create-bulk";
-import CreateRole from "@/components/user-management/create-role";
 import ResetPassword from "@/components/user-management/reset-password";
-import PermissionList from "@/components/user-management/view-permissions";
 import { useDataPermission } from "@/context";
 import createAxiosInstance from "@/utils/api";
 import exportToCSV from "@/utils/exportCSV";
-import { SearchIcon } from "@/utils/svg";
 import { JSX, useEffect, useState } from "react";
 
-function UserManagement() {
+function VendorManagement() {
   const axiosInstance = createAxiosInstance();
   const {
     pagination,
@@ -32,43 +30,28 @@ function UserManagement() {
     setCentralStateDelete,
     setSuccessState,
   } = useDataPermission();
-  const tabs = ["All Users", "Roles", "Permissions"];
+  const tabs = ["Companies"];
 
+  const [companies, setCompanies] = useState<any[]>();
   const [users, setUsers] = useState<User[]>();
-  const [usersBulkExample, setUsersBulkExample] = useState<any>();
   const [roles, setRoles] = useState<Role[]>();
-  const [role, setRole] = useState<RoleData>();
-  const [permissions, setPermissions] = useState<Permission[]>([]);
   const [activeRowId, setActiveRowId] = useState<string | null>(null); // Track active row
 
-  const getUsersUnPaginated = async () => {
+  // Fetch data functions
+
+  const getCompaniesUnPaginated = async () => {
     const response = await axiosInstance.get(
-      `/users?search=${searchQuery}&&${filterQuery}`
+      `/companies?search=${searchQuery}&&${filterQuery}`
     );
-    exportToCSV(response.data.data, "users");
+    exportToCSV(response.data.data, "companies");
   };
-  // const getUsers = async () => {
-  //   const response = await axiosInstance.get(
-  //     `/users?page=${pagination.currentPage}&&paginate=true&&search=${searchQuery}&&${filterQuery}`
-  //   );
-  //   setUsers(response.data.data);
-  //   const extra = response.data.extra;
-  //   setUsersBulkExample(response.data.extra);
-  //   setPagination({
-  //     currentPage: extra.page,
-  //     pageSize: extra.pageSize,
-  //     total: extra.total,
-  //     totalPages: extra.totalPages,
-  //   });
-  // };
 
-  const getUsers = async () => {
+  const getCompanies = async () => {
     const response = await axiosInstance.get(
-      `/user-company/company/${companyStateId}?page=${pagination.currentPage}&&paginate=true&&search=${searchQuery}&&${filterQuery}`
+      `/companies?page=${pagination.currentPage}&&paginate=true&&search=${searchQuery}&&${filterQuery}`
     );
-    setUsers(response.data);
+    setCompanies(response.data);
     const extra = response.data.extra;
-
     setPagination({
       currentPage: extra.page,
       pageSize: extra.pageSize,
@@ -77,18 +60,25 @@ function UserManagement() {
     });
   };
 
-  const getRolesUnpaginated = async () => {
-    try {
-      // Fetch roles
-      const response = await axiosInstance.get(
-        `/roles?search=${searchQuery}&&${filterQuery}`
-      );
-      const roles = response.data.data;
-      // Export roles with permissions to CSV
-      exportToCSV(roles, "roles");
-    } catch (error) {
-      console.error("Error fetching roles:", error);
-    }
+  const getUsersUnPaginated = async () => {
+    const response = await axiosInstance.get(
+      `/user-company/company/${companyStateId}?search=${searchQuery}&&${filterQuery}`
+    );
+    exportToCSV(response.data, "company_users");
+  };
+
+  const getUsers = async () => {
+    const response = await axiosInstance.get(
+      `/user-company/company/${companyStateId}?page=${pagination.currentPage}&&paginate=true&&search=${searchQuery}&&${filterQuery}`
+    );
+    setUsers(response.data);
+    const extra = response.data.extra;
+    setPagination({
+      currentPage: extra.page,
+      pageSize: extra.pageSize,
+      total: extra.total,
+      totalPages: extra.totalPages,
+    });
   };
 
   const getRoles = async () => {
@@ -111,14 +101,15 @@ function UserManagement() {
     }
   };
 
-  const getARole = async () => {
-    const response = await axiosInstance.get(`/roles/${activeRowId}`);
-    setRole(response.data.data);
-  };
-
-  const getPermissions = async () => {
-    const response = await axiosInstance.get("/permissions");
-    setPermissions(response.data.data);
+  // Delete functions
+  const deleteCompanies = async () => {
+    await axiosInstance.delete(`/companies/${activeRowId}`);
+    setCentralStateDelete("");
+    setSuccessState({
+      title: "Successful",
+      detail: "You have successfully deleted this company",
+      status: true,
+    });
   };
 
   // Delete functions
@@ -132,85 +123,59 @@ function UserManagement() {
     });
   };
 
-  const deleteRole = async (id: number) => {
-    await axiosInstance.delete(`/roles/${activeRowId}`);
-    setCentralStateDelete("");
-    setSuccessState({
-      title: "Successful",
-      detail: "You have successfully deleted this role",
-      status: true,
-    });
-  };
-
-  // Group permissions by category
-  const groupPermissions = (permissions: Permission[]) => {
-    return permissions?.reduce((groups, permission) => {
-      const category = permission?.permissionString
-        ?.split(":")[0]
-        ?.split("_")[1];
-      if (!groups[category]) {
-        groups[category] = [];
-      }
-      groups[category].push(permission);
-      return groups;
-    }, {} as Record<string, Permission[]>);
-  };
-
-  const groupedPermissions = groupPermissions(permissions);
-  const groupedPermissionsByUser = groupPermissions(role?.permissions);
-
   // Toggle actions
   const toggleActions = (rowId: string) => {
-    if (selectedTab === "All Users" || selectedTab === "Roles") {
-      setActiveRowId((prevId) => (prevId === rowId ? null : rowId));
-    } else {
-      setActiveRowId(rowId);
-    }
+    setActiveRowId((prevId) => (prevId === rowId ? null : rowId));
   };
 
   // Dynamic title and detail logic
   const getTitle = () => {
     switch (centralState) {
+      case "createCompany":
+        return activeRowId ? "Edit Company" : "Create Company";
+      case "createCompanyLogo":
+        return "Edit Logo";
+      case "assignOwner":
+        return "Assign Owner";
       case "createUser":
-        return activeRowId ? "Edit User" : "Create User";
-      case "createRole":
-        return activeRowId ? "Edit Role" : "Create Role";
+        return activeRowId ? "Edit Users" : "Create Users";
       case "createBulkUser":
         return "Upload Bulk User";
-      case "createBulkRole":
-        return "Upload Bulk Role";
       case "resetPassword":
         return "Reset Password";
-      case "viewPermissions":
-        return "Role permissions";
     }
     switch (centralStateDelete) {
+      case "deleteCompany":
+        return "Delete Company";
+
       case "deleteUser":
         return "De-activate User";
       case "activateUser":
         return "Re-activate User";
-      case "deleteRole":
-        return "Delete Role";
     }
     return "Zijela";
   };
 
   const getDetail = () => {
     switch (centralState) {
+      case "createCompany":
+        return activeRowId
+          ? "You can edit company details here."
+          : "You can create and manage company here.";
+      case "createCompanyLogo":
+        return "Edit your company Logo";
+      case "createBulkCompany":
+        return "Import CSV/Excel file";
       case "createUser":
         return activeRowId
           ? "You can edit user details here."
-          : "You can create and manage users' access here.";
-      case "createRole":
-        return activeRowId
-          ? "You can edit role details here."
-          : "You can manage users' access here.";
-      case "createBulkUser":
-        return "Import CSV/Excel file";
-      case "createBulkRole":
-        return "Import CSV/Excel file";
+          : "You can manage users here.";
+      case "assignOwner":
+        return "";
       case "resetPassword":
         return "Change the password for this user";
+      case "createBulkUser":
+        return "Import CSV/Excel file";
       case "viewPermissions":
         return "All permissions available for this role";
     }
@@ -219,14 +184,75 @@ function UserManagement() {
         return "Are you sure you want to Re-activate this user";
       case "deleteUser":
         return "Are you sure you want to de-activate this user";
-      case "deleteRole":
-        return "Are you sure you want to delete this role";
+      case "deleteCompany":
+        return "Are you sure you want to delete this company";
     }
     return "Zijela";
   };
 
+  console.log(users);
   // Mapping centralState values to components
   const componentMap: Record<string, JSX.Element> = {
+    createCompany: (
+      <DynamicCreateForm
+        inputs={[
+          { name: "name", label: "Company Name", type: "text" },
+          { name: "code", label: "Company Code", type: "text" },
+          { name: "website", label: "Website", type: "text" },
+          { name: "address", label: "Address", type: "text" },
+          { name: "phoneNumber", label: "Phone Number", type: "text" },
+          { name: "email", label: "Email address", type: "text" },
+        ]}
+        selects={[]}
+        title="Company"
+        apiEndpoint="/companies"
+        activeRowId={activeRowId}
+        setModalState={setCentralState}
+        setSuccessState={setSuccessState}
+        fetchResource={(id) =>
+          axiosInstance.get(`/companies/${id}`).then((res) => res.data)
+        }
+      />
+    ),
+    createCompanyLogo: (
+      <AvatarUploader
+        activeRowId={activeRowId}
+        setModalState={setCentralState}
+        setSuccessState={setSuccessState}
+      />
+    ),
+    assignOwner: (
+      <DynamicCreateForm
+        inputs={[]}
+        selects={[
+          {
+            name: "ownerId",
+            label: "Company Owner",
+            placeholder: "Assign Company to a Owner",
+            options: users?.map((user: any) => ({
+              value: user.id,
+              label: `${user?.user.firstName} ${user?.user.lastName}`,
+            })),
+          },
+        ]}
+        title="Company"
+        apiEndpoint={`/companies/${companyStateId}/owner`}
+        activeRowId={activeRowId}
+        setModalState={setCentralState}
+        setSuccessState={setSuccessState}
+        fetchResource={(id) =>
+          axiosInstance.get(`/companies/${id}`).then((res) => res.data)
+        }
+      />
+    ),
+    createBulkCompany: (
+      <CreateBulk
+        type="Companies"
+        activeRowId={activeRowId}
+        setModalState={setCentralState}
+        setSuccessState={setSuccessState}
+      />
+    ),
     createUser: (
       <DynamicCreateForm
         inputs={[
@@ -247,38 +273,13 @@ function UserManagement() {
           },
         ]}
         title="User"
-        // apiEndpoint={`${activeRowId ? "/users" : "/users/pre-register"}`}
-        apiEndpoint={`${activeRowId ? "/users" : "/users/create/company-user"}`}
+        apiEndpoint={`${activeRowId ? "/users" : "/users/create-company-user"}`}
         activeRowId={activeRowId}
         setModalState={setCentralState}
         setSuccessState={setSuccessState}
         fetchResource={(id) =>
           axiosInstance.get(`/users/${id}`).then((res) => res.data.data)
         }
-      />
-    ),
-    createBulkUser: (
-      <CreateBulk
-        type="Users"
-        setModalState={setCentralState}
-        setSuccessState={setSuccessState}
-        activeRowId={activeRowId}
-        bulkExample={usersBulkExample?.bulkFile}
-      />
-    ),
-    createRole: (
-      <CreateRole
-        setModalState={setCentralState}
-        setSuccessState={setSuccessState}
-        activeRowId={activeRowId}
-      />
-    ),
-    createBulkRole: (
-      <CreateBulk
-        type="Roles"
-        setModalState={setCentralState}
-        setSuccessState={setSuccessState}
-        activeRowId={activeRowId}
       />
     ),
     resetPassword: (
@@ -289,23 +290,20 @@ function UserManagement() {
         setSuccessState={setSuccessState}
       />
     ),
-    viewPermissions: (
-      <div className="p-4">
-        <PermissionList groupedPermissions={groupedPermissionsByUser || []} />
-      </div>
+    createBulkUser: (
+      <CreateBulk
+        type="Users"
+        setModalState={setCentralState}
+        setSuccessState={setSuccessState}
+        activeRowId={activeRowId}
+        // bulkExample={usersBulkExample?.bulkFile}
+      />
     ),
   };
 
-  useEffect(() => {
-    if (centralState === "viewPermissions") {
-      getARole();
-    }
-  }, [centralState]);
-
   const tabPermissions: { [key: string]: string[] } = {
-    "All Users": ["read_users"], // Permission to view "All Users"
-    Role: ["read_roles"], // Permission to view "Role"
-    Permissions: ["read_permissions"], // Permission to view "Permissions"
+    Companies: ["read_companies"],
+    // Users: ["read_user-company:user/userId"],
   };
 
   const { userPermissions } = useDataPermission();
@@ -325,10 +323,9 @@ function UserManagement() {
   const [selectedTab, setSelectedTab] = useState<string>(getDefaultTab() || "");
 
   useEffect(() => {
-    if (selectedTab === "Role") {
-      getRoles();
-    } else if (selectedTab === "Permissions") {
-      getPermissions();
+    if (selectedTab === "Companies") {
+      getCompanies();
+      getUsers();
     } else {
       const fetchData = async () => {
         await Promise.all([getUsers(), getRoles()]);
@@ -342,15 +339,14 @@ function UserManagement() {
     pagination.currentPage,
     searchQuery,
     filterQuery,
-    companyStateId,
   ]);
 
   useEffect(() => {
     if (showFilter === "export") {
-      if (selectedTab === "All Users") {
-        getUsersUnPaginated();
+      if (selectedTab === "Companies") {
+        getCompaniesUnPaginated();
       } else {
-        getRolesUnpaginated();
+        getUsersUnPaginated();
       }
       setShowFilter("");
     }
@@ -361,34 +357,23 @@ function UserManagement() {
     clearSearchAndPagination();
   }, [selectedTab]);
 
-  const [searchData, setSearchQuery] = useState("");
-  const filteredPermissions = Object.entries(groupedPermissions).reduce(
-    (acc, [category, permissions]) => {
-      const filtered = permissions.filter(({ permissionString }) =>
-        permissionString.toLowerCase().includes(searchData.toLowerCase())
-      );
-
-      if (filtered.length > 0) {
-        acc[category] = filtered;
-      }
-
-      return acc;
-    },
-    {} as typeof groupedPermissions
-  );
-
   return (
     <DashboardLayout
-      title="User Management"
-      detail="Manage all users and their roles."
+      title="Company Management"
+      detail="Manage all companies and users here"
       getTitle={getTitle}
       getDetail={getDetail}
       componentMap={componentMap}
-      takeAction={centralStateDelete === "deleteRole" ? deleteRole : deleteUser}
+      takeAction={
+        centralStateDelete === "deleteCompany" ? deleteCompanies : deleteUser
+      }
       setActiveRowId={setActiveRowId}
     >
       <PermissionGuard
-        requiredPermissions={["read_users", "read_permission", "read_roles"]}
+        requiredPermissions={[
+          "read_companies",
+          "read_user-company:user/userId",
+        ]}
       >
         <div className="relative bg-white rounded-2xl p-4">
           <div className="flex space-x-4 pb-2">
@@ -418,10 +403,31 @@ function UserManagement() {
       </PermissionGuard>
 
       <PermissionGuard
-        requiredPermissions={["read_users", "read_permission", "read_roles"]}
+        requiredPermissions={[
+          "read_companies",
+          "read_user-company:user/userId",
+        ]}
       >
         <div className="relative bg-white rounded-2xl p-4 mt-4">
-          {selectedTab === "All Users" && (
+          {selectedTab === "Companies" && (
+            <TableComponent
+              data={companies}
+              type="companies"
+              setModalState={setCentralState}
+              setModalStateDelete={setCentralStateDelete}
+              toggleActions={toggleActions}
+              activeRowId={activeRowId}
+              setActiveRowId={setActiveRowId}
+              deleteAction={setCentralStateDelete}
+              currentPage={pagination.currentPage}
+              setCurrentPage={(page) =>
+                setPagination({ ...pagination, currentPage: page })
+              }
+              itemsPerPage={pagination.pageSize}
+              totalPages={pagination.totalPages}
+            />
+          )}
+          {selectedTab === "Users" && (
             <TableComponent
               data={users}
               type="users"
@@ -431,8 +437,6 @@ function UserManagement() {
               activeRowId={activeRowId}
               setActiveRowId={setActiveRowId}
               deleteAction={setCentralStateDelete}
-              //new
-
               currentPage={pagination.currentPage}
               setCurrentPage={(page) =>
                 setPagination({ ...pagination, currentPage: page })
@@ -441,42 +445,10 @@ function UserManagement() {
               totalPages={pagination.totalPages}
             />
           )}
-          {selectedTab === "Roles" && (
-            <TableComponent
-              data={roles}
-              type="roles"
-              setModalState={setCentralState}
-              setModalStateDelete={setCentralStateDelete}
-              toggleActions={toggleActions}
-            />
-          )}
-          {selectedTab === "Permissions" && (
-            <>
-              <div className="flex sm:flex-row flex-col items-center md:space-x-2 space-x-0 space-y-2 md:space-y-0  font-semibold text-md mb-4">
-                <div
-                  className={`flex items-center border rounded-md focus-within:ring-2 focus-within:ring-blue-500 w-full`}
-                >
-                  {/* Search Icon */}
-                  <span className="pl-3 text-gray-400 mt-2">
-                    <SearchIcon />
-                  </span>
-                  <input
-                    id="searchInput"
-                    type="text"
-                    placeholder="Search for permission..."
-                    value={searchData}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="px-1 py-4 w-full focus:outline-none"
-                  />
-                </div>
-              </div>
-              <PermissionList groupedPermissions={filteredPermissions} />
-            </>
-          )}
         </div>
       </PermissionGuard>
     </DashboardLayout>
   );
 }
 
-export default withPermissions(UserManagement, ["users", "roles"]);
+export default withPermissions(VendorManagement, ["companies"]);

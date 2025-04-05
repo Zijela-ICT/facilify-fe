@@ -28,10 +28,12 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 const createAxiosInstance = (): AxiosInstance => {
+  const company = localStorage.getItem("selectedCompany");
   const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
     headers: {
       "Content-Type": "application/json",
+      "companyid" : company
     },
   });
 
@@ -76,7 +78,9 @@ const createAxiosInstance = (): AxiosInstance => {
           // Dont attempt refresh for login or refresh endpoints
           if (
             config.url.includes("auth/login") ||
-            config.url.includes("auth/refresh-token")
+            config.url.includes("auth/refresh-token")||
+            config.url.includes("unread") ||
+            config.url.includes("")
           ) {
             toast.error(data.message || "Invalid login credentials.");
             return Promise.reject(error);
@@ -101,7 +105,7 @@ const createAxiosInstance = (): AxiosInstance => {
               // Retrieve the refresh token from localStorage
               const refreshToken = localStorage.getItem("refreshToken");
               axios
-                .post("https://updc-dev.zijela.com/api/v1/auth/refresh-token", {
+                .post("https://b67b-169-255-124-3.ngrok-free.app/api/v1/auth/refresh-token", {
                   refreshToken,
                 })
                 .then(({ data }) => {

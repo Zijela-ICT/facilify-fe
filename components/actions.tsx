@@ -1,8 +1,8 @@
-import PermissionGuard from "./auth/permission-protected-components";
 import { TrashIcon, TrashIconGray, TripleDotsIcon } from "@/utils/svg";
-import ActionDropdownComponent from "./action-dropdown-component";
-import ButtonComponent, { DropdownButtonComponent } from "./button-component";
 import { useRouter } from "next/navigation";
+import ActionDropdownComponent from "./action-dropdown-component";
+import PermissionGuard from "./auth/permission-protected-components";
+import ButtonComponent, { DropdownButtonComponent } from "./button-component";
 
 interface UserActionsProps {
   type: string;
@@ -439,7 +439,7 @@ const Actions: React.FC<UserActionsProps> = ({
                         permissions={["delete_units:id"]}
                       />
                     )}
-                    {/* for access-control */}             
+                    {/* for access-control */}
                     {/* <li>
                       <DropdownButtonComponent
                         text="Manage access control"
@@ -770,6 +770,74 @@ const Actions: React.FC<UserActionsProps> = ({
                       text="Delete"
                       onClick={() => setModalStateDelete("deletePowerCharge")}
                       permissions={["delete_power-charges:id"]}
+                    />
+                  </li>
+                </ul>
+              </ActionDropdownComponent>
+            )}
+          </div>
+        </>
+      ) : type === "companies" ? (
+        <>
+          <div className="relative">
+            {/* Button */}
+            <PermissionGuard
+              requiredPermissions={[
+                "read_companies:id",
+                "update_companies:id",
+                "update_companies:id/logo",
+                "delete_companies:id",
+              ]}
+            >
+              <button
+                onClick={() => toggleActions(row.id)}
+                className="text-blue-500 hover:text-blue-700"
+              >
+                <TripleDotsIcon />
+              </button>
+            </PermissionGuard>
+
+            {/* Dropdown Menu */}
+            {activeRowId === row.id && (
+              <ActionDropdownComponent
+                toggleActions={() => toggleActions(null)}
+                contextMenuedActions={() => contextMenuedActions(null)}
+                contextMenued={contextMenued}
+              >
+                <ul className="py-2">
+                  <li>
+                    <DropdownButtonComponent
+                      text="View"
+                      onClick={() => router.push(`/company/${row.id}`)}
+                      permissions={["read_companies:id"]}
+                    />
+                  </li>
+                  <li>
+                    <DropdownButtonComponent
+                      text="Edit"
+                      onClick={() => setModalState("createCompany")}
+                      permissions={["update_companies:id"]}
+                    />
+                  </li>
+                  <li>
+                    <DropdownButtonComponent
+                      text="Edit Logo"
+                      onClick={() => setModalState("createCompanyLogo")}
+                      permissions={["update_companies:id/logo"]}
+                    />
+                  </li>
+                  <li>
+                    <DropdownButtonComponent
+                      text="Assign Company Owner"
+                      onClick={() => setModalState("assignOwner")}
+                      permissions={["update_companies:id"]}
+                    />
+                  </li>
+                  <li>
+                    <DropdownButtonComponent
+                      text="Delete"
+                      onClick={() => setModalStateDelete("deleteCompany")}
+                      permissions={["delete_companies:id"]}
                     />
                   </li>
                 </ul>

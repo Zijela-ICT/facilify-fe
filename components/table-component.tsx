@@ -1,4 +1,7 @@
 "use client";
+import { useDataPermission } from "@/context";
+import exportToCSV from "@/utils/exportCSV";
+import formatCurrency from "@/utils/formatCurrency";
 import {
   ExportIcon,
   FilterIcon,
@@ -7,20 +10,17 @@ import {
   SearchIcon,
   WorkIcon,
 } from "@/utils/svg";
-import React, { useEffect, useState } from "react";
-import ButtonComponent from "./button-component";
 import { tableMainButtonConfigs } from "@/utils/tableConfig";
-import Image from "next/image";
-import StatusBadge from "./status-component";
-import formatCurrency from "@/utils/formatCurrency";
-import Actions from "./actions";
 import moment from "moment";
-import Pagination from "./pagination-table";
-import { useDataPermission } from "@/context";
-import FilterComponent from "./table-filter-component";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import Actions from "./actions";
+import ButtonComponent from "./button-component";
 import { MyLoaderFinite } from "./loader-components";
-import exportToCSV from "@/utils/exportCSV";
 import { ActionModalCompoenent } from "./modal-component";
+import Pagination from "./pagination-table";
+import StatusBadge from "./status-component";
+import FilterComponent from "./table-filter-component";
 
 interface TableProps {
   data: Record<string, any>[];
@@ -557,6 +557,29 @@ export default function TableComponent({
                             >
                               {`${row?.firstName?.[0] || ""}${
                                 row?.lastName?.[0] || ""
+                              }`.toUpperCase()}
+                            </div>
+                          )
+                        ) : column === "logoUrl" ? (
+                          row?.logoUrl ? (
+                            <Image
+                              src={row.logoUrl}
+                              alt={`${row?.name} ${row?.name}`}
+                              className="rounded-full object-cover"
+                              width={30}
+                              height={30}
+                            />
+                          ) : (
+                            <div
+                              className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold`}
+                              style={{
+                                backgroundColor: `#${Math.floor(
+                                  Math.random() * 16777215
+                                ).toString(16)}`,
+                              }}
+                            >
+                              {`${row?.name?.[0] || ""}${
+                                row?.name?.[0] || ""
                               }`.toUpperCase()}
                             </div>
                           )

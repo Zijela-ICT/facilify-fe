@@ -149,6 +149,21 @@ export const tableMainButtonConfigs = {
       action: "createBulkPowerCharge",
     },
   ],
+  companies: [
+    {
+      text: "Create Company",
+      className: "flex-1 px-4 py-3 text-white bg-[#A8353A]",
+      permissions: ["create_power-charges"],
+      action: "createCompany",
+    },
+    // {
+    //   text: "Bulk Power Charge",
+    //   className:
+    //     "flex-1 px-4 py-3 text-[#A8353A] bg-white border border-[#A8353A]",
+    //   permissions: ["create_power-charges"],
+    //   action: "createBulkPowerCharge",
+    // },
+  ],
   workrequests: [
     {
       text: "Create Work Request",

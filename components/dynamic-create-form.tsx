@@ -1,5 +1,7 @@
 "use client";
 
+import createAxiosInstance from "@/utils/api";
+import { multiSelectStyle } from "@/utils/ojects";
 import { FormEvent, useEffect, useState } from "react";
 import Select from "react-select";
 import {
@@ -7,8 +9,6 @@ import {
   LabelInputComponent,
   LabelTextareaComponent,
 } from "./input-container";
-import { multiSelectStyle } from "@/utils/ojects";
-import createAxiosInstance from "@/utils/api";
 
 interface InputField {
   name: string;
@@ -183,7 +183,8 @@ export default function DynamicCreateForm({
           "Work Request",
           "Work request overdue limit",
           "Work order overdue limit",
-          "Create api Key"
+          "Create api Key",
+          "Company"
         ].includes(title)
       ) {
         if (activeRowId) {
@@ -254,15 +255,15 @@ export default function DynamicCreateForm({
         }
 
         if (data.facility && typeof data.facility === "object") {
-          dynamicProcessedData.facilityId = data.facility.id; // Example: Keep only the user ID
+          dynamicProcessedData.facilityId = data.facility.id; 
         }
 
         if (data.block && typeof data.block === "object") {
-          dynamicProcessedData.blockId = data.block.id; // Example: Keep only the user ID
+          dynamicProcessedData.blockId = data.block.id; 
         }
 
         if (data.approvalLimit) {
-          dynamicProcessedData.limit = data.approvalLimit; // Example: Keep only the user ID
+          dynamicProcessedData.limit = data.approvalLimit; 
         }
 
         setResource(data);
@@ -385,6 +386,7 @@ export default function DynamicCreateForm({
                 "Assets",
                 "Block",
                 "Work Request",
+                "Company"
               ].includes(title)
                 ? activeRowId
                   ? `Edit ${title}`

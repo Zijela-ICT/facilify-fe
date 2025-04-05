@@ -1,4 +1,6 @@
 import { useDataPermission } from "@/context";
+import { formatRoleName } from "@/utils/formatRoleNames";
+import { multiSelectStyle } from "@/utils/ojects";
 import {
   FacilityMIcon,
   HomeIcon,
@@ -13,11 +15,11 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
-import ModalCompoenent from "./modal-component";
-import ButtonComponent from "./button-component";
+import { useCallback, useEffect, useState } from "react";
+import Select from "react-select";
 import PermissionGuard from "./auth/permission-protected-components";
-import { formatRoleName } from "@/utils/formatRoleNames";
+import ButtonComponent from "./button-component";
+import ModalCompoenent from "./modal-component";
 
 const Logo = "/assets/logo.png";
 
@@ -25,7 +27,15 @@ export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const { user, userRoles, userPermissions } = useDataPermission();
+  const {
+    user,
+    userRoles,
+    userCompanies,
+    userPermissions,
+    companyStateId,
+    setCompanyStateId,
+  } = useDataPermission();
+
   const [centralState, setCentralState] = useState<string>("");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -66,12 +76,58 @@ export default function Navigation() {
     (role: Role) => role.name === "TENANT_ROLE"
   );
 
+  const [formData, setFormData] = useState({
+    company: "",
+  });
+
+  const handleSelectChange =
+    (fieldName: string, isMulti = false) =>
+    (selected: any) => {
+      const value = isMulti
+        ? selected.map((option: any) => option.value)
+        : selected?.value || "";
+
+      setCompanyStateId(selected?.value);
+
+      setFormData((prevFormData) => {
+        const updatedData = { ...prevFormData, [fieldName]: value };
+        localStorage.setItem("selectedCompany", updatedData.company); // Store in localStorage
+        return updatedData;
+      });
+    };
+
+  const companyOptions = userCompanies?.map((block: any) => ({
+    value: block?.companyId,
+    label: block?.companyName,
+  }));
+
+  const selectedCompany = userCompanies.find(
+    (comp) =>
+      Number(comp.companyId) === Number(formData.company || companyStateId)
+  );
+
+  console.log(selectedCompany);
+
   const navItems = [
     {
       href: "/dashboard",
       label: "Dashboard",
       permissions: [""],
       icon: <HomeIcon />,
+    },
+    {
+      href: "/company",
+      label: "Company",
+      permissions: ["companies"],
+      icon: <HomeIcon />,
+      children: [
+        {
+          href: "/company/subscription",
+          label: "Subscriptions",
+          permissions: ["companies"],
+          icon: <TransactionMIcon />,
+        },
+      ],
     },
     {
       href: "/facility-management",
@@ -127,12 +183,12 @@ export default function Navigation() {
     //   permissions: ["tv", "internet", "airtime", "electricity"],
     //   icon: <WorkRequestIcon />,
     // },
-    // {
-    //   href: "/access-control",
-    //   label: "Access Control",
-    //   permissions: ["access-control"],
-    //   icon: <WorkRequestIcon />,
-    // },
+    {
+      href: "/access-control",
+      label: "Access Control",
+      permissions: ["access-control"],
+      icon: <WorkRequestIcon />,
+    },
     {
       href: "/vendor-management",
       label: "Vendor & Tech Management",
@@ -160,6 +216,18 @@ export default function Navigation() {
       ],
     },
   ];
+
+  useEffect(() => {
+    if (userCompanies.length > 0) {
+      setCompanyStateId(companyStateId || userCompanies[0]?.companyId);
+      setFormData({
+        ...formData,
+        company: companyStateId || userCompanies[0]?.companyId,
+      });
+    }
+
+    console.log(formData.company, "lalal");
+  }, [userCompanies]);
 
   return (
     <>
@@ -227,7 +295,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           <Link href={`/dashboard`} className="px-4">
             <Image
-              src={Logo}
+              src={selectedCompany?.companyLogo}
               alt="logo"
               width={isCollapsed ? 50 : 100}
               height={isCollapsed ? 35 : 70}
@@ -278,17 +346,31 @@ export default function Navigation() {
 
         {/* Full profile card visible only when not collapsed */}
         {!isCollapsed && (
-          <div
-            onClick={() => setCentralState("viewProfile")}
-            className="flex cursor-pointer hover:animate-tilt flex-col items-center justify-center p-4 bg-[#A8353A] rounded-lg shadow-lg text-white max-w-sm mx-auto "
-          >
-            <p className="text-base font-semibold">
-              {user?.firstName} {user?.lastName}
-            </p>
-            <div className="text-xs mt-2 bg-white text-[#A8353A] px-3 py-1 rounded-full shadow-sm">
-              {formatRoleName(userRoles[0]?.name)}
+          <>
+            <div
+              onClick={() => setCentralState("viewProfile")}
+              className="flex cursor-pointer hover:animate-tilt flex-col items-center justify-center p-4 bg-[#A8353A] rounded-lg shadow-lg text-white max-w-sm mx-auto "
+            >
+              <p className="text-base font-semibold">
+                {user?.firstName} {user?.lastName}
+              </p>
+              <div className="text-xs mt-2 bg-white text-[#A8353A] px-3 py-1 rounded-full shadow-sm">
+                {formatRoleName(userRoles[0]?.name)}
+              </div>
             </div>
-          </div>
+            {/* Dropdown for selecting an option */}
+            <div className="w-full mt-3 p-2 bg-[#8C2F33] rounded-lg shadow-md">
+              <Select
+                options={companyOptions}
+                value={companyOptions?.find(
+                  (option) => option.value === formData.company
+                )}
+                onChange={handleSelectChange("company")}
+                styles={multiSelectStyle}
+                placeholder="Select Company"
+              />
+            </div>
+          </>
         )}
 
         <div

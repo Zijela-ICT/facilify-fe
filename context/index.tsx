@@ -2,10 +2,10 @@
 
 import React, {
   createContext,
-  useContext,
-  useState,
-  useEffect,
   ReactNode,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
 
 // Define the types
@@ -13,10 +13,12 @@ interface ContextType {
   user: AuthUser | null;
   userPermissions: Permission[];
   userRoles: any[];
+  userCompanies: any[];
   loading: boolean;
   setUser: (user: AuthUser | null) => void;
   setUserPermissions: (permissions: Permission[]) => void;
   setUserRoles: (roles: any[]) => void;
+  setUserCompanies: (companies: any[]) => void;
   setLoading: (state: boolean) => void;
   pagination: {
     currentPage: number;
@@ -49,6 +51,9 @@ interface ContextType {
 
   notificationState: any;
   setNotificationState: React.Dispatch<React.SetStateAction<any>>;
+
+  companyStateId: any;
+  setCompanyStateId: React.Dispatch<React.SetStateAction<any>>;
 
   successState: {
     title: string;
@@ -85,7 +90,9 @@ export const DataPermissionProvider = ({
   const [user, setUser] = useState<AuthUser | null>(null);
   const [userPermissions, setUserPermissions] = useState<Permission[]>([]);
   const [userRoles, setUserRoles] = useState<any[]>([]);
+  const [userCompanies, setUserCompanies] = useState<any[]>([]);
   const [notificationState, setNotificationState] = useState<any>();
+  const [companyStateId, setCompanyStateId] = useState<any>();
 
   // Keep loading and pagination in memory (do not persist)
   const [loading, setLoading] = useState<boolean>(false);
@@ -109,10 +116,12 @@ export const DataPermissionProvider = ({
       const storedUser = localStorage.getItem("user");
       const storedPermissions = localStorage.getItem("userPermissions");
       const storedRoles = localStorage.getItem("userRoles");
+      const storedCompanyId = localStorage.getItem("selectedCompany");
 
       if (storedUser) setUser(JSON.parse(storedUser));
       if (storedPermissions) setUserPermissions(JSON.parse(storedPermissions));
       if (storedRoles) setUserRoles(JSON.parse(storedRoles));
+      if (storedCompanyId) setCompanyStateId(storedCompanyId);
 
       setHydrated(true); // Mark hydration as complete
     }
@@ -137,6 +146,12 @@ export const DataPermissionProvider = ({
     }
   }, [userRoles, hydrated]);
 
+  useEffect(() => {
+    if (hydrated) {
+      localStorage.setItem("selectedCompany", companyStateId);
+    }
+  }, [userRoles, hydrated]);
+
   if (!hydrated) return null; // Avoid SSR mismatch by skipping the initial render
 
   // Function to clear searchQuery and reset pagination
@@ -152,9 +167,11 @@ export const DataPermissionProvider = ({
         user,
         userPermissions,
         userRoles,
+        userCompanies,
         setUser,
         setUserPermissions,
         setUserRoles,
+        setUserCompanies,
         loading,
         setLoading,
         pagination,
@@ -178,7 +195,10 @@ export const DataPermissionProvider = ({
         setCentralStateDelete,
 
         notificationState,
-        setNotificationState
+        setNotificationState,
+
+        companyStateId,
+        setCompanyStateId,
       }}
     >
       {children}

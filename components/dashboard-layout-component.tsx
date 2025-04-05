@@ -1,4 +1,7 @@
 // components/DashboardLayout.tsx
+import { useDataPermission } from "@/context";
+import createAxiosInstance from "@/utils/api";
+import formatCurrency from "@/utils/formatCurrency";
 import {
   ArrowLeft,
   NotifIcon,
@@ -6,22 +9,18 @@ import {
   SettingUserIcon,
   UserProfile,
 } from "@/utils/svg";
-import Navigation from "./navigation-component";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import ProtectedRoute from "./auth/protected-routes";
-import { useDataPermission } from "@/context";
+import ChangeMyPassword from "./change-my-password";
 import ModalCompoenent, {
   ActionModalCompoenent,
   SuccessModalCompoenent,
 } from "./modal-component";
-import { useEffect, useState } from "react";
-import ChangeMyPassword from "./change-my-password";
-import Link from "next/link";
-import Image from "next/image";
-import formatCurrency from "@/utils/formatCurrency";
-import createAxiosInstance from "@/utils/api";
+import Navigation from "./navigation-component";
 import NotificationCard from "./notif-component";
-import { useRouter, usePathname } from "next/navigation";
-import PermissionGuard from "./auth/permission-protected-components";
 
 export default function DashboardLayout({
   children,
@@ -60,6 +59,7 @@ export default function DashboardLayout({
     setUser,
     setUserPermissions,
     setUserRoles,
+    setUserCompanies,
     centralState,
     setCentralState,
     centralStateDelete,
@@ -82,8 +82,9 @@ export default function DashboardLayout({
   const getMe = async () => {
     const response = await axiosInstance.get("/auth/me");
     setUser(response.data.data.user);
-    const roles = response.data.data?.roles || [];
+    const roles = response.data.data?.user?.roles || [];
     setUserRoles(roles);
+    setUserCompanies(response.data.data?.userCompanies);
     const allPermissions = roles
       .map((role: any) => role.permissions || []) // Extract permissions from each role, you get ?
       .flat(); // Flatten the array of arrays

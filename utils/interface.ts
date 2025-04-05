@@ -17,6 +17,7 @@ interface User {
 interface AuthUser {
   id: number;
   avatar: any;
+  companies : any[]
   username: string;
   firstName: string | null;
   lastName: string | null;
