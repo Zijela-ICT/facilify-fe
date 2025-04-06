@@ -52,6 +52,7 @@ export default function Navigation() {
     localStorage.removeItem("user");
     localStorage.removeItem("userPermissions");
     localStorage.removeItem("userRoles");
+    localStorage.setItem("selectedCompany", undefined);
     router.push("/");
   };
 
@@ -105,8 +106,6 @@ export default function Navigation() {
     (comp) =>
       Number(comp.companyId) === Number(formData.company || companyStateId)
   );
-
-  console.log(selectedCompany);
 
   const navItems = [
     {
@@ -219,14 +218,13 @@ export default function Navigation() {
 
   useEffect(() => {
     if (userCompanies.length > 0) {
+      localStorage.setItem("selectedCompany", userCompanies[0]?.companyId);
       setCompanyStateId(companyStateId || userCompanies[0]?.companyId);
       setFormData({
         ...formData,
         company: companyStateId || userCompanies[0]?.companyId,
       });
     }
-
-    console.log(formData.company, "lalal");
   }, [userCompanies]);
 
   return (

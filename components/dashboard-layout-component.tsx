@@ -51,11 +51,12 @@ export default function DashboardLayout({
   takeAction?: any;
   setActiveRowId?: (id: any) => void;
   setABeneficiary?: (id: any) => void;
-  setANotification?: (any:any) => void
+  setANotification?: (any: any) => void;
 }) {
   const axiosInstance = createAxiosInstance();
   const {
     user,
+    userPermissions,
     setUser,
     setUserPermissions,
     setUserRoles,
@@ -68,6 +69,7 @@ export default function DashboardLayout({
     setSuccessState,
     notificationState,
     setNotificationState,
+    companyStateId,
   } = useDataPermission();
   const pathname = usePathname();
   const router = useRouter();
@@ -92,12 +94,34 @@ export default function DashboardLayout({
     const uniquePermissions: Permission[] = Array.from(new Set(allPermissions));
     setUserPermissions(uniquePermissions);
   };
-
   useEffect(() => {
     if (pathname !== "/dashboard") {
       getMe();
     }
   }, [pathname]);
+
+  const getCompanyPermission = async () => {
+    const response = await axiosInstance.get(
+      `/user-company-role/my-permissions`
+    );
+    const roles = response.data.roles || [];
+    const allPermissions = roles
+      .map((role: any) => role?.permissions || [])
+      .flat();
+    const combinedPermissions = [...userPermissions, ...allPermissions];
+    const uniquePermissions: Permission[] = Array.from(
+      new Set(combinedPermissions)
+    );
+    setUserPermissions(uniquePermissions);
+    console.log(uniquePermissions, "sepa");
+  };
+  useEffect(() => {
+    if (companyStateId) {
+      console.log(companyStateId, "companiyod");
+
+      getCompanyPermission();
+    }
+  }, [companyStateId]);
 
   const getNotifications = async () => {
     const response = await axiosInstance.get(
@@ -270,7 +294,9 @@ export default function DashboardLayout({
             </div>
 
             {/* Children content */}
-            <div className="bg-gray-100 h-full text-sm p-6 relative">{children}</div>
+            <div className="bg-gray-100 h-full text-sm p-6 relative">
+              {children}
+            </div>
           </div>
         </div>
       </ProtectedRoute>

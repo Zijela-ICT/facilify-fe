@@ -54,29 +54,18 @@ function Dashboard() {
     detail: "",
     status: false,
   });
-
   const getMe = async () => {
     const response = await axiosInstance.get("/auth/me");
     setUser(response.data.data.user);
     const roles = response.data.data?.user?.roles || [];
     setUserRoles(roles);
-    const companyRoles = response.data?.userCompanies?.roles || [];
     setUserCompanies(response.data.data?.userCompanies);
     const allPermissions = roles
       .map((role: any) => role.permissions || []) // Extract permissions from each role
       .flat(); // Flatten the array of arrays
-    const allCompanyPermissions = companyRoles
-      .map((role: any) => role.permissions || []) // Extract permissions from each role
-      .flat(); // Flatten the array of arrays
     // Remove duplicate permissions using a Set
-
-    const combinedPermissions = [...allPermissions, ...allCompanyPermissions];
-    const uniquePermissions: Permission[] = Array.from(
-      new Set(combinedPermissions)
-    );
+    const uniquePermissions: Permission[] = Array.from(new Set(allPermissions));
     setUserPermissions(uniquePermissions);
-
-    console.log(uniquePermissions);
   };
 
   const loading = !(user && userPermissions && userCompanies);
@@ -407,7 +396,7 @@ function Dashboard() {
         });
       };
 
-      fetchAllData();
+      // fetchAllData();
     }
   }, [userPermissions]);
 

@@ -64,9 +64,9 @@ function UserManagement() {
 
   const getUsers = async () => {
     const response = await axiosInstance.get(
-      `/user-company/company/${companyStateId}?page=${pagination.currentPage}&&paginate=true&&search=${searchQuery}&&${filterQuery}`
+      `/user-company-role/company-users?page=${pagination.currentPage}&&paginate=true&&search=${searchQuery}&&${filterQuery}`
     );
-    setUsers(response.data);
+    setUsers(response.data.data);
     const extra = response.data.extra;
 
     setPagination({
