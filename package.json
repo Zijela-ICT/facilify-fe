@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "push" : "git push origin && git push personal"
   },
   "dependencies": {
     "axios": "^1.7.9",
