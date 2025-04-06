@@ -59,6 +59,7 @@ export default function DashboardLayout({
     userPermissions,
     setUser,
     setUserPermissions,
+    setCompanyPermissions,
     setUserRoles,
     setUserCompanies,
     centralState,
@@ -76,6 +77,7 @@ export default function DashboardLayout({
 
   const [selectedWallet, setSelectedWallet] = useState<any>();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [loader, setLoader] = useState(true);
 
   useEffect(() => {
     setSelectedWallet(user?.wallets[0]);
@@ -108,20 +110,27 @@ export default function DashboardLayout({
     const allPermissions = roles
       .map((role: any) => role?.permissions || [])
       .flat();
-    const combinedPermissions = [...userPermissions, ...allPermissions];
-    const uniquePermissions: Permission[] = Array.from(
-      new Set(combinedPermissions)
-    );
-    setUserPermissions(uniquePermissions);
-    console.log(uniquePermissions, "sepa");
+
+    const uniquePermissions: Permission[] = Array.from(new Set(allPermissions));
+    setCompanyPermissions(uniquePermissions);
   };
   useEffect(() => {
     if (companyStateId) {
-      console.log(companyStateId, "companiyod");
-
       getCompanyPermission();
     }
   }, [companyStateId]);
+
+  // useEffect(() => {
+  //   const fetchPermissions = async () => {
+  //     if (!companyStateId) return;
+
+  //     setLoader(true);
+  //     await getCompanyPermission(); // Wait until done
+  //     setLoader(false);
+  //   };
+
+  //   fetchPermissions();
+  // }, [companyStateId]);
 
   const getNotifications = async () => {
     const response = await axiosInstance.get(
@@ -151,6 +160,7 @@ export default function DashboardLayout({
     setShowNotifications((prev) => !prev);
   };
 
+  console.log(loader, "what?");
   return (
     <>
       <ModalCompoenent
@@ -295,6 +305,17 @@ export default function DashboardLayout({
 
             {/* Children content */}
             <div className="bg-gray-100 h-full text-sm p-6 relative">
+              {/* {loader && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+                  <div className="flex flex-col items-center space-y-4">
+                    <MyLoaderFinite />
+                    <div className="text-lg font-medium text-gray-800">
+                      Hold on, switching company
+                    </div>
+                  </div>
+                </div>
+              )} */}
+
               {children}
             </div>
           </div>

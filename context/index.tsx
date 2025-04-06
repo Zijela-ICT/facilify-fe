@@ -12,11 +12,13 @@ import React, {
 interface ContextType {
   user: AuthUser | null;
   userPermissions: Permission[];
+  companyPermissions : Permission[]
   userRoles: any[];
   userCompanies: any[];
   loading: boolean;
   setUser: (user: AuthUser | null) => void;
   setUserPermissions: (permissions: Permission[]) => void;
+  setCompanyPermissions: (permissions: Permission[]) => void;
   setUserRoles: (roles: any[]) => void;
   setUserCompanies: (companies: any[]) => void;
   setLoading: (state: boolean) => void;
@@ -89,6 +91,7 @@ export const DataPermissionProvider = ({
   const [hydrated, setHydrated] = useState(false); // Prevent hydration mismatch
   const [user, setUser] = useState<AuthUser | null>(null);
   const [userPermissions, setUserPermissions] = useState<Permission[]>([]);
+  const [companyPermissions, setCompanyPermissions] = useState<Permission[]>([]);
   const [userRoles, setUserRoles] = useState<any[]>([]);
   const [userCompanies, setUserCompanies] = useState<any[]>([]);
   const [notificationState, setNotificationState] = useState<any>();
@@ -166,10 +169,12 @@ export const DataPermissionProvider = ({
       value={{
         user,
         userPermissions,
+        companyPermissions,
         userRoles,
         userCompanies,
         setUser,
         setUserPermissions,
+        setCompanyPermissions,
         setUserRoles,
         setUserCompanies,
         loading,

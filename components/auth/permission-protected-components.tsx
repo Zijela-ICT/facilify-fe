@@ -15,12 +15,12 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
   fallback = null,
   children,
 }) => {
-  const { userPermissions } = useDataPermission(); // Use the hook directly inside the component
+  const { userPermissions, companyPermissions } = useDataPermission(); // Use the hook directly inside the component
 
   // Helper function to check for exact permission matches
   const hasPermissionForRoute = (permissions: string[]) => {
     return permissions?.some((permission) =>
-      userPermissions?.some(
+      [...userPermissions, ...companyPermissions]?.some(
         (userPermission) => userPermission?.permissionString === permission
       )
     );

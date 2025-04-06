@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import { useDataPermission } from "@/context";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 // Higher-Order Component
 const withPermissions = (
@@ -13,12 +13,12 @@ const withPermissions = (
     const router = useRouter();
     const pathName = usePathname();
 
-    const { userPermissions } = useDataPermission(); // Move the hook here
+    const { userPermissions, companyPermissions } = useDataPermission(); // Move the hook here
 
     // Helper function to check for permission matches
     const hasPermissionForRoute = (permissions: string[]) => {
       return permissions?.some((permission) =>
-        userPermissions?.some((userPermission) =>
+        [...userPermissions, ...companyPermissions]?.some((userPermission) =>
           userPermission?.permissionString.includes(permission)
         )
       );
