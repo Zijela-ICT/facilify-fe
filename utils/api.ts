@@ -30,7 +30,8 @@ const processQueue = (error: any, token: string | null = null) => {
 const createAxiosInstance = (): AxiosInstance => {
   const company = localStorage.getItem("selectedCompany");
   const axiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    // baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL : "/backend/",
     headers: {
       "Content-Type": "application/json",
       "companyid" : company
