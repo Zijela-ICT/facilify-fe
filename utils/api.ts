@@ -78,9 +78,7 @@ const createAxiosInstance = (): AxiosInstance => {
           // Dont attempt refresh for login or refresh endpoints
           if (
             config.url.includes("auth/login") ||
-            config.url.includes("auth/refresh-token")||
-            config.url.includes("unread") ||
-            config.url.includes("")
+            config.url.includes("auth/refresh-token")
           ) {
             toast.error(data.message || "Invalid login credentials.");
             return Promise.reject(error);
