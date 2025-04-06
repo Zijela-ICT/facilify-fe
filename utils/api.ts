@@ -103,7 +103,7 @@ const createAxiosInstance = (): AxiosInstance => {
               // Retrieve the refresh token from localStorage
               const refreshToken = localStorage.getItem("refreshToken");
               axios
-                .post(" https://nhwr.zijela.com/facilify/api/v1/auth/refresh-token", {
+                .post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`, {
                   refreshToken,
                 })
                 .then(({ data }) => {
