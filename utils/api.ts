@@ -30,8 +30,7 @@ const processQueue = (error: any, token: string | null = null) => {
 const createAxiosInstance = (): AxiosInstance => {
   const company = localStorage.getItem("selectedCompany");
   const axiosInstance = axios.create({
-    // baseURL: process.env.NEXT_PUBLIC_API_URL,
-    baseURL : "/backend/",
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
     headers: {
       "Content-Type": "application/json",
       "companyid" : company
@@ -104,7 +103,7 @@ const createAxiosInstance = (): AxiosInstance => {
               // Retrieve the refresh token from localStorage
               const refreshToken = localStorage.getItem("refreshToken");
               axios
-                .post("http://161.97.116.56:4000/api/v1/auth/refresh-token", {
+                .post(" https://nhwr.zijela.com/facilify/api/v1/auth/refresh-token", {
                   refreshToken,
                 })
                 .then(({ data }) => {
