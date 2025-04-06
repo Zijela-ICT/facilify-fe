@@ -105,7 +105,7 @@ const createAxiosInstance = (): AxiosInstance => {
               // Retrieve the refresh token from localStorage
               const refreshToken = localStorage.getItem("refreshToken");
               axios
-                .post("https://b67b-169-255-124-3.ngrok-free.app/api/v1/auth/refresh-token", {
+                .post("http://161.97.116.56:4000/api/v1/auth/refresh-token", {
                   refreshToken,
                 })
                 .then(({ data }) => {
@@ -125,6 +125,7 @@ const createAxiosInstance = (): AxiosInstance => {
                   localStorage.removeItem("user");
                   localStorage.removeItem("userPermissions");
                   localStorage.removeItem("userRoles");
+                  localStorage.setItem("selectedCompany", undefined);
                   window.location.href = "/";
                   reject(err);
                 })
@@ -139,6 +140,7 @@ const createAxiosInstance = (): AxiosInstance => {
             localStorage.removeItem("user");
             localStorage.removeItem("userPermissions");
             localStorage.removeItem("userRoles");
+            localStorage.setItem("selectedCompany", undefined);
             window.location.href = "/";
           }
         } else {
