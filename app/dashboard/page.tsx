@@ -396,7 +396,7 @@ function Dashboard() {
         });
       };
 
-      // fetchAllData();
+      fetchAllData();
     }
   }, [userPermissions]);
 
