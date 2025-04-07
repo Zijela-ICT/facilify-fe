@@ -30,9 +30,10 @@ function VendorManagement() {
     setCentralStateDelete,
     setSuccessState,
   } = useDataPermission();
-  const tabs = ["Companies"];
+  const tabs = ["Companies", "My Companies"];
 
   const [companies, setCompanies] = useState<any[]>();
+  const [mycompanies, setMyCompanies] = useState<any[]>();
   const [users, setUsers] = useState<User[]>();
   const [roles, setRoles] = useState<Role[]>();
   const [activeRowId, setActiveRowId] = useState<string | null>(null); // Track active row
@@ -46,11 +47,32 @@ function VendorManagement() {
     exportToCSV(response.data.data, "companies");
   };
 
+  const getMyCompaniesUnPaginated = async () => {
+    const response = await axiosInstance.get(
+      `/companies/my/company?search=${searchQuery}&&${filterQuery}`
+    );
+    exportToCSV(response.data.data, "my_companies");
+  };
+
   const getCompanies = async () => {
     const response = await axiosInstance.get(
       `/companies?page=${pagination.currentPage}&&paginate=true&&search=${searchQuery}&&${filterQuery}`
     );
     setCompanies(response.data);
+    const extra = response.data.extra;
+    setPagination({
+      currentPage: extra.page,
+      pageSize: extra.pageSize,
+      total: extra.total,
+      totalPages: extra.totalPages,
+    });
+  };
+
+  const getMyCompanies = async () => {
+    const response = await axiosInstance.get(
+      `/companies/my/company?page=${pagination.currentPage}&&paginate=true&&search=${searchQuery}&&${filterQuery}`
+    );
+    setMyCompanies(response.data);
     const extra = response.data.extra;
     setPagination({
       currentPage: extra.page,
@@ -302,8 +324,8 @@ function VendorManagement() {
   };
 
   const tabPermissions: { [key: string]: string[] } = {
-    Companies: ["read_companies"],
-    // Users: ["read_user-company:user/userId"],
+    Companies: ["read_user-company:company/companyId"],
+    "My Companies": ["read_companies:/my/company"],
   };
 
   const { userPermissions } = useDataPermission();
@@ -328,7 +350,7 @@ function VendorManagement() {
       getUsers();
     } else {
       const fetchData = async () => {
-        await Promise.all([getUsers(), getRoles()]);
+        await Promise.all([getMyCompanies()]);
       };
       fetchData();
     }
@@ -347,7 +369,7 @@ function VendorManagement() {
       if (selectedTab === "Companies") {
         getCompaniesUnPaginated();
       } else {
-        getUsersUnPaginated();
+        getMyCompaniesUnPaginated();
       }
       setShowFilter("");
     }
@@ -370,10 +392,10 @@ function VendorManagement() {
       }
       setActiveRowId={setActiveRowId}
     >
-      {/* <PermissionGuard
+      <PermissionGuard
         requiredPermissions={[
-          "read_companies",
-          "read_user-company:user/userId",
+          "read_user-company:company/companyId",
+          "read_companies:/my/company",
         ]}
       >
         <div className="relative bg-white rounded-2xl p-4">
@@ -401,12 +423,12 @@ function VendorManagement() {
             ))}
           </div>
         </div>
-      </PermissionGuard> */}
+      </PermissionGuard>
 
       <PermissionGuard
         requiredPermissions={[
-          "read_companies",
-          "read_user-company:user/userId",
+          "read_user-company:company/companyId",
+          "read_companies:/my/company",
         ]}
       >
         <div className="relative bg-white rounded-2xl p-4 mt-4">
@@ -428,10 +450,10 @@ function VendorManagement() {
               totalPages={pagination.totalPages}
             />
           )}
-          {selectedTab === "Users" && (
+          {selectedTab === "My Companies" && (
             <TableComponent
-              data={users}
-              type="users"
+              data={mycompanies}
+              type="companies"
               setModalState={setCentralState}
               setModalStateDelete={setCentralStateDelete}
               toggleActions={toggleActions}

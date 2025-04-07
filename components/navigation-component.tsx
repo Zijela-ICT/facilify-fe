@@ -151,7 +151,7 @@ export default function Navigation() {
     {
       href: "/approvers",
       label: "Approvers",
-      permissions: ["users"],
+      permissions: ["users/approvers/all"],
       icon: <WorkRequestIcon />,
     },
     {
@@ -166,12 +166,12 @@ export default function Navigation() {
       permissions: ["audit"],
       icon: <WorkRequestIcon />,
     },
-    // {
-    //   href: "/utility",
-    //   label: "Utilities",
-    //   permissions: ["tv", "internet", "airtime", "electricity"],
-    //   icon: <WorkRequestIcon />,
-    // },
+    {
+      href: "/utility",
+      label: "Utilities",
+      permissions: ["tv", "internet", "airtime", "electricity"],
+      icon: <WorkRequestIcon />,
+    },
     {
       href: "/access-control",
       label: "Access Control",
