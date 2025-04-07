@@ -1,26 +1,22 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard-layout-component";
 import TableComponent from "@/components/table-component";
-import ModalCompoenent, {
-  ActionModalCompoenent,
-  SuccessModalCompoenent,
-} from "@/components/modal-component";
+import { JSX, useEffect, useState } from "react";
 
-import withPermissions from "@/components/auth/permission-protected-routes";
 import PermissionGuard from "@/components/auth/permission-protected-components";
+import withPermissions from "@/components/auth/permission-protected-routes";
 import { useDataPermission } from "@/context";
 
 import DynamicCreateForm from "@/components/dynamic-create-form";
 import FacilityDetails from "@/components/facility-management/view-facility";
+import CreateBulk from "@/components/user-management/create-bulk";
+import AcceptQuotation from "@/components/work-request/acceptQuotation";
+import CommentWorkRequestOrder from "@/components/work-request/comment-request-order";
 import CreateWorkRequest from "@/components/work-request/create-work-request";
 import CreateWorkRequestForUser from "@/components/work-request/create-work-request-by-facility-manager";
 import UpdateWorkRequest from "@/components/work-request/update-work-request";
-import AcceptQuotation from "@/components/work-request/acceptQuotation";
 import createAxiosInstance from "@/utils/api";
-import CommentWorkRequestOrder from "@/components/work-request/comment-request-order";
-import CreateBulk from "@/components/user-management/create-bulk";
 import exportToCSV from "@/utils/exportCSV";
 
 interface Props {
@@ -44,6 +40,7 @@ function WorkRequests({ nowrap }: Props) {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
 
   const hasTenantRole = userRoles.some(
@@ -524,6 +521,7 @@ function WorkRequests({ nowrap }: Props) {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   useEffect(() => {

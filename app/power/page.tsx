@@ -1,16 +1,16 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
-import DashboardLayout from "@/components/dashboard-layout-component";
-import TableComponent from "@/components/table-component";
-import withPermissions from "@/components/auth/permission-protected-routes";
 import PermissionGuard from "@/components/auth/permission-protected-components";
-import { useDataPermission } from "@/context";
-import ApportionPower from "@/components/work-request/apportionPower";
+import withPermissions from "@/components/auth/permission-protected-routes";
+import DashboardLayout from "@/components/dashboard-layout-component";
 import FacilityDetails from "@/components/facility-management/view-facility";
-import createAxiosInstance from "@/utils/api";
+import TableComponent from "@/components/table-component";
 import CreateBulk from "@/components/user-management/create-bulk";
+import ApportionPower from "@/components/work-request/apportionPower";
+import { useDataPermission } from "@/context";
+import createAxiosInstance from "@/utils/api";
 import exportToCSV from "@/utils/exportCSV";
+import { JSX, useEffect, useState } from "react";
 
 function Power() {
   const axiosInstance = createAxiosInstance();
@@ -27,6 +27,7 @@ function Power() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
   const tabs = ["Power Apportion"];
 
@@ -179,6 +180,7 @@ function Power() {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   useEffect(() => {

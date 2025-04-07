@@ -1,36 +1,30 @@
 "use client";
 
+import PermissionGuardApi from "@/components/auth/permission-protected-api";
+import PermissionGuard from "@/components/auth/permission-protected-components";
+import withPermissions from "@/components/auth/permission-protected-routes";
 import DashboardLayout from "@/components/dashboard-layout-component";
+import { MyLoaderFinite } from "@/components/loader-components";
+import TableComponent from "@/components/table-component";
+import { useDataPermission } from "@/context";
+import createAxiosInstance from "@/utils/api";
+import exportToCSV from "@/utils/exportCSV";
+import { multiSelectStyle } from "@/utils/ojects";
 import {
-  ArrowLeft,
-  IncomingIcon,
-  OutgoingIcon,
-  RefreshIcon,
-  TransactionIcon,
+  RefreshIcon
 } from "@/utils/svg";
-import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
-import Link from "next/link";
-import withPermissions from "@/components/auth/permission-protected-routes";
-import createAxiosInstance from "@/utils/api";
-import { chartOptions, multiSelectStyle } from "@/utils/ojects";
-import { useDataPermission } from "@/context";
-import TableComponent from "@/components/table-component";
-import PermissionGuard from "@/components/auth/permission-protected-components";
 import { useParams } from "next/navigation";
-import { MyLoaderFinite } from "@/components/loader-components";
-import exportToCSV from "@/utils/exportCSV";
-import PermissionGuardApi from "@/components/auth/permission-protected-api";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 
 // Register required components in Chart.js
@@ -61,6 +55,7 @@ function Transactions() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
   const { id, entity } = useParams();
   const [filters, setFilters] = useState({
@@ -275,7 +270,7 @@ function Transactions() {
       ]);
     };
     fetchData();
-  }, []);
+  }, [   companyStateId,]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -307,6 +302,7 @@ function Transactions() {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   useEffect(() => {
@@ -335,7 +331,7 @@ function Transactions() {
 
     fetchTransactions();
     setShowFilter("");
-  }, [id, entity, user.wallets, showFilter, filterQuery]);
+  }, [id, entity, user.wallets, showFilter, filterQuery,    companyStateId,]);
 
   useEffect(() => {
     const fetchFilteredTransactions = async () => {
@@ -354,7 +350,7 @@ function Transactions() {
 
     setLoading(true);
     fetchFilteredTransactions();
-  }, [filters]);
+  }, [filters,    companyStateId,]);
 
 
   const monthlyData = {

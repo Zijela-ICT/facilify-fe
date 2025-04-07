@@ -28,21 +28,22 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 const createAxiosInstance = (): AxiosInstance => {
-  const company = localStorage.getItem("selectedCompany");
   const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
     headers: {
       "Content-Type": "application/json",
-      "companyid" : company
     },
   });
 
   axiosInstance.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem("authToken");
-
+      const company = localStorage.getItem("selectedCompany");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+      }
+      if (company) {
+        config.headers.companyId = company;
       }
       return config;
     },
@@ -103,9 +104,12 @@ const createAxiosInstance = (): AxiosInstance => {
               // Retrieve the refresh token from localStorage
               const refreshToken = localStorage.getItem("refreshToken");
               axios
-                .post(" https://nhwr.zijela.com/facilify/api/v1/auth/refresh-token", {
-                  refreshToken,
-                })
+                .post(
+                  " https://nhwr.zijela.com/facilify/api/v1/auth/refresh-token",
+                  {
+                    refreshToken,
+                  }
+                )
                 .then(({ data }) => {
                   localStorage.setItem("authToken", data.data.access_token);
                   axiosInstance.defaults.headers.common[
@@ -123,7 +127,7 @@ const createAxiosInstance = (): AxiosInstance => {
                   localStorage.removeItem("user");
                   localStorage.removeItem("userPermissions");
                   localStorage.removeItem("userRoles");
-                  localStorage.setItem("selectedCompany", undefined);
+                  localStorage.removeItem("selectedCompany");
                   window.location.href = "/";
                   reject(err);
                 })
@@ -138,7 +142,7 @@ const createAxiosInstance = (): AxiosInstance => {
             localStorage.removeItem("user");
             localStorage.removeItem("userPermissions");
             localStorage.removeItem("userRoles");
-            localStorage.setItem("selectedCompany", undefined);
+            localStorage.removeItem("selectedCompany");
             window.location.href = "/";
           }
         } else {

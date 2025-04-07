@@ -1,22 +1,17 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
-import DashboardLayout from "@/components/dashboard-layout-component";
-import ModalCompoenent, {
-  ActionModalCompoenent,
-  SuccessModalCompoenent,
-} from "@/components/modal-component";
-import withPermissions from "@/components/auth/permission-protected-routes";
 import PermissionGuard from "@/components/auth/permission-protected-components";
+import withPermissions from "@/components/auth/permission-protected-routes";
+import DashboardLayout from "@/components/dashboard-layout-component";
+import ModalCompoenent from "@/components/modal-component";
+import AirtimeFlow from "@/components/utility.tsx/airtime-prgress-form";
+import Benfeciaries from "@/components/utility.tsx/benficiaries";
+import ElectricityFlow from "@/components/utility.tsx/electricity-prgress-form";
+import UtilityCardContainer from "@/components/utility.tsx/utility-cards";
 import { useDataPermission } from "@/context";
 import createAxiosInstance from "@/utils/api";
-import UtilityCardContainer from "@/components/utility.tsx/utility-cards";
-import ElectricityFlow from "@/components/utility.tsx/electricity-prgress-form";
-import AirtimeFlow from "@/components/utility.tsx/airtime-prgress-form";
-import InternetFlow from "@/components/utility.tsx/internet-prgress-form";
-import TVFlow from "@/components/utility.tsx/tv-prgress-form";
-import Benfeciaries from "@/components/utility.tsx/benficiaries";
 import { useRouter } from "next/navigation";
+import { JSX, useEffect, useState } from "react";
 
 function UtilityManagement() {
   const axiosInstance = createAxiosInstance();
@@ -34,6 +29,7 @@ function UtilityManagement() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
   const router = useRouter();
   const tabs = ["Electricity", "Airtime", "Internet", "TV Subscription"];
@@ -219,7 +215,7 @@ function UtilityManagement() {
     };
 
     fetchData();
-  }, []);
+  }, [   companyStateId,]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -242,6 +238,7 @@ function UtilityManagement() {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   //new clear

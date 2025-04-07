@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import createAxiosInstance from "@/utils/api";
 import ButtonComponent from "@/components/button-component";
 import { MyLoaderFinite } from "@/components/loader-components";
+import createAxiosInstance from "@/utils/api";
 import axios from "axios";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 function CompleteTransaction() {
   const axiosInstance = createAxiosInstance();
@@ -39,7 +39,7 @@ function CompleteTransaction() {
   const verifyTransaction = async () => {
     if (!query) return; // Prevent API call if query is missing
     try {
-      await axios.patch(`https://updc-dev.zijela.com/api/v1/payments/verify/${query}`);
+      await axios.patch(`https://nhwr.zijela.com/facilify/api/v1/payments/verify/${query}`);
       sendMessageToReactNative(query, "success");
     } catch (error) {
       console.error("Transaction verification failed:", error);

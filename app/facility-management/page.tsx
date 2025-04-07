@@ -1,23 +1,22 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
-import DashboardLayout from "@/components/dashboard-layout-component";
-import TableComponent from "@/components/table-component";
-import ModalCompoenent from "@/components/modal-component";
-import CreateBulkUser from "@/components/user-management/create-bulk";
-import withPermissions from "@/components/auth/permission-protected-routes";
-import PermissionGuard from "@/components/auth/permission-protected-components";
-import { useDataPermission } from "@/context";
-import FacilityDetails from "@/components/facility-management/view-facility";
-import DynamicCreateForm from "@/components/dynamic-create-form";
-import CreateCategory from "@/components/facility-management/create-category";
-import CreateAsset from "@/components/facility-management/create-asset";
-import createAxiosInstance from "@/utils/api";
-import FundWallet from "@/components/transaction/fund-wallet";
-import CreateBulk from "@/components/user-management/create-bulk";
-import Payouts from "@/components/transaction/payout";
-import exportToCSV from "@/utils/exportCSV";
 import PermissionGuardApi from "@/components/auth/permission-protected-api";
+import PermissionGuard from "@/components/auth/permission-protected-components";
+import withPermissions from "@/components/auth/permission-protected-routes";
+import DashboardLayout from "@/components/dashboard-layout-component";
+import DynamicCreateForm from "@/components/dynamic-create-form";
+import CreateAsset from "@/components/facility-management/create-asset";
+import CreateCategory from "@/components/facility-management/create-category";
+import FacilityDetails from "@/components/facility-management/view-facility";
+import ModalCompoenent from "@/components/modal-component";
+import TableComponent from "@/components/table-component";
+import FundWallet from "@/components/transaction/fund-wallet";
+import Payouts from "@/components/transaction/payout";
+import { default as CreateBulk, default as CreateBulkUser } from "@/components/user-management/create-bulk";
+import { useDataPermission } from "@/context";
+import createAxiosInstance from "@/utils/api";
+import exportToCSV from "@/utils/exportCSV";
+import { JSX, useEffect, useState } from "react";
 
 function FacilityManagement() {
   const axiosInstance = createAxiosInstance();
@@ -36,6 +35,7 @@ function FacilityManagement() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
   const tabs = [
     "Facilities",
@@ -1041,7 +1041,7 @@ function FacilityManagement() {
     } else {
       getFacilities();
     }
-  }, [centralState, centralStateDelete, searchQuery, filterQuery]);
+  }, [centralState, centralStateDelete, searchQuery, filterQuery,    companyStateId]);
 
   useEffect(() => {
     if (centralState === "viewAssetCategory") {

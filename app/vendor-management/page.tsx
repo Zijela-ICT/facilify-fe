@@ -1,15 +1,15 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
-import DashboardLayout from "@/components/dashboard-layout-component";
-import TableComponent from "@/components/table-component";
-import withPermissions from "@/components/auth/permission-protected-routes";
 import PermissionGuard from "@/components/auth/permission-protected-components";
-import { useDataPermission } from "@/context";
+import withPermissions from "@/components/auth/permission-protected-routes";
+import DashboardLayout from "@/components/dashboard-layout-component";
 import DynamicCreateForm from "@/components/dynamic-create-form";
-import createAxiosInstance from "@/utils/api";
+import TableComponent from "@/components/table-component";
 import CreateBulk from "@/components/user-management/create-bulk";
+import { useDataPermission } from "@/context";
+import createAxiosInstance from "@/utils/api";
 import exportToCSV from "@/utils/exportCSV";
+import { JSX, useEffect, useState } from "react";
 
 function VendorManagement() {
   const axiosInstance = createAxiosInstance();
@@ -27,6 +27,7 @@ function VendorManagement() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
   const tabs = ["Vendors", "Technicians"];
 
@@ -346,6 +347,7 @@ function VendorManagement() {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   useEffect(() => {

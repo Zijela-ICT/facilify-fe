@@ -12,7 +12,7 @@ import React, {
 interface ContextType {
   user: AuthUser | null;
   userPermissions: Permission[];
-  companyPermissions : Permission[]
+  companyPermissions: Permission[];
   userRoles: any[];
   userCompanies: any[];
   loading: boolean;
@@ -91,7 +91,9 @@ export const DataPermissionProvider = ({
   const [hydrated, setHydrated] = useState(false); // Prevent hydration mismatch
   const [user, setUser] = useState<AuthUser | null>(null);
   const [userPermissions, setUserPermissions] = useState<Permission[]>([]);
-  const [companyPermissions, setCompanyPermissions] = useState<Permission[]>([]);
+  const [companyPermissions, setCompanyPermissions] = useState<Permission[]>(
+    []
+  );
   const [userRoles, setUserRoles] = useState<any[]>([]);
   const [userCompanies, setUserCompanies] = useState<any[]>([]);
   const [notificationState, setNotificationState] = useState<any>();
@@ -153,7 +155,7 @@ export const DataPermissionProvider = ({
     if (hydrated) {
       localStorage.setItem("selectedCompany", companyStateId);
     }
-  }, [userRoles, hydrated]);
+  }, [companyStateId, hydrated]);
 
   if (!hydrated) return null; // Avoid SSR mismatch by skipping the initial render
 

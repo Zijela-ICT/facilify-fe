@@ -1,11 +1,11 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard-layout-component";
 import TableComponent from "@/components/table-component";
+import { JSX, useEffect, useState } from "react";
 
-import withPermissions from "@/components/auth/permission-protected-routes";
 import PermissionGuard from "@/components/auth/permission-protected-components";
+import withPermissions from "@/components/auth/permission-protected-routes";
 import { useDataPermission } from "@/context";
 import createAxiosInstance from "@/utils/api";
 import exportToCSV from "@/utils/exportCSV";
@@ -25,6 +25,7 @@ function Power() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
 
   const [auditLogs, setAuditLogs] = useState<any[]>();
@@ -74,6 +75,7 @@ function Power() {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   useEffect(() => {

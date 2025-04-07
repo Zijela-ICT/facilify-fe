@@ -28,8 +28,11 @@ function Dashboard() {
     userRoles,
     userCompanies,
     setUserPermissions,
+    setCompanyPermissions,
     setUserRoles,
     setUserCompanies,
+    setCompanyStateId,
+    companyStateId,
   } = useDataPermission();
 
   const [selectedWallet, setSelectedWallet] = useState<any>();
@@ -60,6 +63,7 @@ function Dashboard() {
     const roles = response.data.data?.user?.roles || [];
     setUserRoles(roles);
     setUserCompanies(response.data.data?.userCompanies);
+
     const allPermissions = roles
       .map((role: any) => role.permissions || []) // Extract permissions from each role
       .flat(); // Flatten the array of arrays
@@ -67,6 +71,17 @@ function Dashboard() {
     const uniquePermissions: Permission[] = Array.from(new Set(allPermissions));
     setUserPermissions(uniquePermissions);
   };
+
+  useEffect(() => {
+    const storedCompanyId = localStorage.getItem("selectedCompany");
+
+    if (userCompanies.length > 0 && !storedCompanyId) {
+      const company = userCompanies;
+      const companyId = company && company[0]?.companyId;
+      setCompanyStateId(companyId);
+      localStorage.setItem("selectedCompany", companyId);
+    }
+  }, [userCompanies]);
 
   const loading = !(user && userPermissions && userCompanies);
 
@@ -398,7 +413,7 @@ function Dashboard() {
 
       fetchAllData();
     }
-  }, [userPermissions]);
+  }, [userPermissions, companyStateId]);
 
   return (
     <>

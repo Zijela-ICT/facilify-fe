@@ -15,7 +15,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Select from "react-select";
 import PermissionGuard from "./auth/permission-protected-components";
 import ButtonComponent from "./button-component";
@@ -32,6 +32,7 @@ export default function Navigation() {
     userRoles,
     userCompanies,
     userPermissions,
+    companyPermissions,
     companyStateId,
     setCompanyStateId,
   } = useDataPermission();
@@ -52,7 +53,7 @@ export default function Navigation() {
     localStorage.removeItem("user");
     localStorage.removeItem("userPermissions");
     localStorage.removeItem("userRoles");
-    localStorage.setItem("selectedCompany", undefined);
+    localStorage.removeItem("selectedCompany");
     router.push("/");
   };
 
@@ -67,7 +68,7 @@ export default function Navigation() {
   // Check if the user has any of the permissions for a route
   const hasPermissionForRoute = (permissions: string[]) => {
     return permissions.some((permission) =>
-      userPermissions.some((userPermission) =>
+      [...userPermissions, ...companyPermissions].some((userPermission) =>
         userPermission.permissionString.includes(permission)
       )
     );
@@ -77,10 +78,6 @@ export default function Navigation() {
     (role: Role) => role.name === "TENANT_ROLE"
   );
 
-  const [formData, setFormData] = useState({
-    company: "",
-  });
-
   const handleSelectChange =
     (fieldName: string, isMulti = false) =>
     (selected: any) => {
@@ -89,12 +86,6 @@ export default function Navigation() {
         : selected?.value || "";
 
       setCompanyStateId(selected?.value);
-
-      setFormData((prevFormData) => {
-        const updatedData = { ...prevFormData, [fieldName]: value };
-        localStorage.setItem("selectedCompany", updatedData.company); // Store in localStorage
-        return updatedData;
-      });
     };
 
   const companyOptions = userCompanies?.map((block: any) => ({
@@ -103,8 +94,7 @@ export default function Navigation() {
   }));
 
   const selectedCompany = userCompanies.find(
-    (comp) =>
-      Number(comp.companyId) === Number(formData.company || companyStateId)
+    (comp) => Number(comp.companyId) === Number(companyStateId)
   );
 
   const navItems = [
@@ -215,17 +205,6 @@ export default function Navigation() {
       ],
     },
   ];
-
-  useEffect(() => {
-    if (userCompanies.length > 0) {
-      localStorage.setItem("selectedCompany", userCompanies[0]?.companyId);
-      setCompanyStateId(companyStateId || userCompanies[0]?.companyId);
-      setFormData({
-        ...formData,
-        company: companyStateId || userCompanies[0]?.companyId,
-      });
-    }
-  }, [userCompanies]);
 
   return (
     <>
@@ -360,8 +339,12 @@ export default function Navigation() {
             <div className="w-full mt-3 p-2 bg-[#8C2F33] rounded-lg shadow-md">
               <Select
                 options={companyOptions}
+                // value={companyOptions?.find(
+                //   (option) => option.value === formData.company
+                // )}
+
                 value={companyOptions?.find(
-                  (option) => option.value === formData.company
+                  (option) => option.value === companyStateId
                 )}
                 onChange={handleSelectChange("company")}
                 styles={multiSelectStyle}

@@ -30,6 +30,7 @@ export default function Ppm() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
   const tabs = ["Calender", "PPMs"];
 
@@ -240,6 +241,7 @@ export default function Ppm() {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   useEffect(() => {

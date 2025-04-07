@@ -1,21 +1,18 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import withPermissions from "@/components/auth/permission-protected-routes";
+import ButtonComponent from "@/components/button-component";
 import DashboardLayout from "@/components/dashboard-layout-component";
 import InputComponent from "@/components/input-container";
-import { CameraIcon } from "@/utils/svg";
-import ButtonComponent from "@/components/button-component";
+import ModalCompoenent from "@/components/modal-component";
 import { useDataPermission } from "@/context";
-import { toast } from "react-toastify";
-import axiosInstance from "@/utils/api";
-import ModalCompoenent, {
-  SuccessModalCompoenent,
-} from "@/components/modal-component";
+import createAxiosInstance from "@/utils/api";
+import { CameraIcon } from "@/utils/svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import AvatarEditor from "react-avatar-editor";
-import withPermissions from "@/components/auth/permission-protected-routes";
-import createAxiosInstance from "@/utils/api";
+import { toast } from "react-toastify";
 
 function UserProfile() {
   const axiosInstance = createAxiosInstance();
@@ -28,6 +25,7 @@ function UserProfile() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
 
   // State for password inputs

@@ -1,15 +1,15 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
-import DashboardLayout from "@/components/dashboard-layout-component";
-import TableComponent from "@/components/table-component";
-import withPermissions from "@/components/auth/permission-protected-routes";
 import PermissionGuard from "@/components/auth/permission-protected-components";
+import withPermissions from "@/components/auth/permission-protected-routes";
+import DashboardLayout from "@/components/dashboard-layout-component";
+import DynamicCreateForm from "@/components/dynamic-create-form";
+import TableComponent from "@/components/table-component";
+import PermissionList from "@/components/user-management/view-permissions";
 import { useDataPermission } from "@/context";
 import createAxiosInstance from "@/utils/api";
-import DynamicCreateForm from "@/components/dynamic-create-form";
-import PermissionList from "@/components/user-management/view-permissions";
 import exportToCSV from "@/utils/exportCSV";
+import { JSX, useEffect, useState } from "react";
 
 function Approvers() {
   const axiosInstance = createAxiosInstance();
@@ -26,6 +26,7 @@ function Approvers() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
   const tabs = ["Power Apportion"];
 
@@ -185,6 +186,7 @@ function Approvers() {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   useEffect(() => {

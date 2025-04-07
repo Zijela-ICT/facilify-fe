@@ -1,6 +1,19 @@
 "use client";
 
+import PermissionGuardApi from "@/components/auth/permission-protected-api";
+import PermissionGuard from "@/components/auth/permission-protected-components";
+import withPermissions from "@/components/auth/permission-protected-routes";
 import DashboardLayout from "@/components/dashboard-layout-component";
+import { MyLoaderFinite } from "@/components/loader-components";
+import ModalCompoenent from "@/components/modal-component";
+import ManagePin from "@/components/transaction/create-pin";
+import FundOtherWallet from "@/components/transaction/fund-other-wallet";
+import FundWallet from "@/components/transaction/fund-wallet";
+import Payouts from "@/components/transaction/payout";
+import { useDataPermission } from "@/context";
+import createAxiosInstance from "@/utils/api";
+import formatCurrency from "@/utils/formatCurrency";
+import { chartOptions, multiSelectStyle } from "@/utils/ojects";
 import {
   ArrowLeft,
   IncomingIcon,
@@ -8,35 +21,20 @@ import {
   RefreshIcon,
   TransactionIcon,
 } from "@/utils/svg";
-import { JSX, useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
 } from "chart.js";
-import Link from "next/link";
-import withPermissions from "@/components/auth/permission-protected-routes";
-import createAxiosInstance from "@/utils/api";
-import { chartOptions, multiSelectStyle } from "@/utils/ojects";
-import { useDataPermission } from "@/context";
-import PermissionGuard from "@/components/auth/permission-protected-components";
-import { MyLoaderFinite } from "@/components/loader-components";
-import FundWallet from "@/components/transaction/fund-wallet";
-import ModalCompoenent, {
-  SuccessModalCompoenent,
-} from "@/components/modal-component";
-import formatCurrency from "@/utils/formatCurrency";
-import FundOtherWallet from "@/components/transaction/fund-other-wallet";
-import Payouts from "@/components/transaction/payout";
 import moment from "moment";
-import ManagePin from "@/components/transaction/create-pin";
-import PermissionGuardApi from "@/components/auth/permission-protected-api";
+import Link from "next/link";
+import { JSX, useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
 import Select from "react-select";
 
 // Register required components in Chart.js
@@ -60,6 +58,7 @@ function Transactions() {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
   const [filters, setFilters] = useState({
     User: "",
@@ -206,7 +205,7 @@ function Transactions() {
       ]);
     };
     fetchData();
-  }, []);
+  }, [   companyStateId,]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -221,7 +220,7 @@ function Transactions() {
     } else {
       setFilteredTransactions([]);
     }
-  }, []);
+  }, [   companyStateId,]);
 
   useEffect(() => {
     const fetchFilteredTransactions = async () => {
@@ -241,7 +240,7 @@ function Transactions() {
     };
 
     fetchFilteredTransactions();
-  }, [filters]);
+  }, [filters,   companyStateId,]);
 
   const monthlyData = {
     INFLOW: Array(12).fill(0), // For January to December

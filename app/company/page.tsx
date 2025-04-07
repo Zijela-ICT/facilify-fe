@@ -339,6 +339,7 @@ function VendorManagement() {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   useEffect(() => {
@@ -369,7 +370,7 @@ function VendorManagement() {
       }
       setActiveRowId={setActiveRowId}
     >
-      <PermissionGuard
+      {/* <PermissionGuard
         requiredPermissions={[
           "read_companies",
           "read_user-company:user/userId",
@@ -400,7 +401,7 @@ function VendorManagement() {
             ))}
           </div>
         </div>
-      </PermissionGuard>
+      </PermissionGuard> */}
 
       <PermissionGuard
         requiredPermissions={[

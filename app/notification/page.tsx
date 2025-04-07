@@ -1,13 +1,12 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
-import DashboardLayout from "@/components/dashboard-layout-component";
 import withPermissions from "@/components/auth/permission-protected-routes";
-import createAxiosInstance from "@/utils/api";
+import DashboardLayout from "@/components/dashboard-layout-component";
 import Pagination from "@/components/pagination-table";
-import moment from "moment";
 import { useDataPermission } from "@/context";
-import ModalCompoenent from "@/components/modal-component";
+import createAxiosInstance from "@/utils/api";
+import moment from "moment";
+import { JSX, useEffect, useState } from "react";
 
 interface Notification {
   id: number;
@@ -29,6 +28,7 @@ function NotificationPage() {
     setCentralState,
     notificationState,
     setNotificationState,
+    companyStateId,
   } = useDataPermission();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notification, setANotification] = useState<Notification>(null);
@@ -85,6 +85,7 @@ function NotificationPage() {
     searchQuery,
     filterQuery,
     notificationFilter,
+    companyStateId,
   ]);
 
   useEffect(() => {

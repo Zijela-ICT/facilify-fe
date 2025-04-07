@@ -14,6 +14,10 @@ const remotePatterns: RemotePattern[] = [
     protocol: "https",
     hostname: "api.budpay.com",
   },
+  {
+    protocol: "https",
+    hostname: "nhwr.zijela.com",
+  },
 ];
 
 const nextConfig: NextConfig = {

@@ -1,29 +1,25 @@
 "use client";
 
-import { JSX, useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard-layout-component";
 import TableComponent from "@/components/table-component";
-import ModalCompoenent, {
-  ActionModalCompoenent,
-  SuccessModalCompoenent,
-} from "@/components/modal-component";
+import { JSX, useEffect, useState } from "react";
 
-import withPermissions from "@/components/auth/permission-protected-routes";
 import PermissionGuard from "@/components/auth/permission-protected-components";
-import { useDataPermission } from "@/context";
+import withPermissions from "@/components/auth/permission-protected-routes";
 import DynamicCreateForm from "@/components/dynamic-create-form";
 import FacilityDetails from "@/components/facility-management/view-facility";
+import AcceptQuotation from "@/components/work-order/acceptQuotation";
 import CreateWorkOrder from "@/components/work-order/create-work-order";
 import UpdateWorkOrder from "@/components/work-order/update-work-order";
-import AcceptQuotation from "@/components/work-order/acceptQuotation";
+import { useDataPermission } from "@/context";
 
 import ButtonComponent from "@/components/button-component";
-import createAxiosInstance from "@/utils/api";
-import CommentWorkRequestOrder from "@/components/work-request/comment-request-order";
-import RequestQuotationApproval from "@/components/work-order/request-quotation-approval";
 import CreateBulk from "@/components/user-management/create-bulk";
-import exportToCSV from "@/utils/exportCSV";
+import RequestQuotationApproval from "@/components/work-order/request-quotation-approval";
+import CommentWorkRequestOrder from "@/components/work-request/comment-request-order";
 import Rate from "@/components/work-request/rate";
+import createAxiosInstance from "@/utils/api";
+import exportToCSV from "@/utils/exportCSV";
 
 interface Props {
   nowrap: boolean;
@@ -45,6 +41,7 @@ function WorkOrders({ nowrap }: Props) {
     centralStateDelete,
     setCentralStateDelete,
     setSuccessState,
+    companyStateId,
   } = useDataPermission();
   const tabs = ["All Work Order", "My Work Order"];
 
@@ -631,6 +628,7 @@ function WorkOrders({ nowrap }: Props) {
     pagination.currentPage,
     searchQuery,
     filterQuery,
+    companyStateId,
   ]);
 
   useEffect(() => {

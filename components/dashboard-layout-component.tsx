@@ -114,10 +114,9 @@ export default function DashboardLayout({
     const uniquePermissions: Permission[] = Array.from(new Set(allPermissions));
     setCompanyPermissions(uniquePermissions);
   };
+
   useEffect(() => {
-    if (companyStateId) {
-      getCompanyPermission();
-    }
+    getCompanyPermission();
   }, [companyStateId]);
 
   // useEffect(() => {
