@@ -193,13 +193,13 @@ export default function Navigation() {
     {
       href: "/transaction",
       label: "Transactions",
-      permissions: ["transactions", "users"],
+      permissions: ["transactions"],
       icon: <TransactionMIcon />,
       children: [
         {
           href: "/transaction/approve-funding",
           label: "Approve funding",
-          permissions: ["payments", "users"],
+          permissions: ["payments"],
           icon: <TransactionMIcon />,
         },
       ],
