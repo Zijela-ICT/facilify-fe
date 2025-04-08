@@ -153,7 +153,7 @@ export const tableMainButtonConfigs = {
     {
       text: "Create Company",
       className: "flex-1 px-4 py-3 text-white bg-[#A8353A]",
-      permissions: ["create_power-charges"],
+      permissions: ["create_companies"],
       action: "createCompany",
     },
     // {

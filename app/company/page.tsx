@@ -30,7 +30,7 @@ function VendorManagement() {
     setCentralStateDelete,
     setSuccessState,
   } = useDataPermission();
-  const tabs = ["Companies", "My Companies"];
+  const tabs = ["Companies", "My Company"];
 
   const [companies, setCompanies] = useState<any[]>();
   const [mycompanies, setMyCompanies] = useState<any[]>();
@@ -72,7 +72,8 @@ function VendorManagement() {
     const response = await axiosInstance.get(
       `/companies/my/company?page=${pagination.currentPage}&&paginate=true&&search=${searchQuery}&&${filterQuery}`
     );
-    setMyCompanies(response.data);
+    
+    setMyCompanies([response.data]);
     const extra = response.data.extra;
     setPagination({
       currentPage: extra.page,
@@ -325,7 +326,7 @@ function VendorManagement() {
 
   const tabPermissions: { [key: string]: string[] } = {
     Companies: ["read_user-company:company/companyId"],
-    "My Companies": ["read_companies:/my/company"],
+    "My Company": ["read_companies:/my/company"],
   };
 
   const { userPermissions } = useDataPermission();
@@ -450,7 +451,7 @@ function VendorManagement() {
               totalPages={pagination.totalPages}
             />
           )}
-          {selectedTab === "My Companies" && (
+          {selectedTab === "My Company" && (
             <TableComponent
               data={mycompanies}
               type="companies"

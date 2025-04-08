@@ -787,6 +787,7 @@ const Actions: React.FC<UserActionsProps> = ({
                 "update_companies:id",
                 "update_companies:id/logo",
                 "delete_companies:id",
+                "update_companies:id/owner"
               ]}
             >
               <button
@@ -830,7 +831,7 @@ const Actions: React.FC<UserActionsProps> = ({
                     <DropdownButtonComponent
                       text="Assign Company Owner"
                       onClick={() => setModalState("assignOwner")}
-                      permissions={["update_companies:id"]}
+                      permissions={["update_companies:id/owner"]}
                     />
                   </li>
                   <li>
