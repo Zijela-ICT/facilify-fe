@@ -54,8 +54,8 @@ interface ContextType {
   notificationState: any;
   setNotificationState: React.Dispatch<React.SetStateAction<any>>;
 
-  companyStateId: any;
-  setCompanyStateId: React.Dispatch<React.SetStateAction<any>>;
+  companyStateId: any | null;
+  setCompanyStateId: (company: any | null) => void;
 
   successState: {
     title: string;
@@ -97,7 +97,7 @@ export const DataPermissionProvider = ({
   const [userRoles, setUserRoles] = useState<any[]>([]);
   const [userCompanies, setUserCompanies] = useState<any[]>([]);
   const [notificationState, setNotificationState] = useState<any>();
-  const [companyStateId, setCompanyStateId] = useState<any>();
+  const [companyStateId, setCompanyStateId] = useState<any | null>(null);
 
   // Keep loading and pagination in memory (do not persist)
   const [loading, setLoading] = useState<boolean>(false);
@@ -153,7 +153,8 @@ export const DataPermissionProvider = ({
 
   useEffect(() => {
     if (hydrated) {
-      localStorage.setItem("selectedCompany", companyStateId);
+      if (companyStateId !== null)
+        localStorage.setItem("selectedCompany", JSON.stringify(companyStateId));
     }
   }, [companyStateId, hydrated]);
 

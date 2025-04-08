@@ -48,13 +48,14 @@ export default function Navigation() {
   const isActive = useCallback((path: string) => pathname === path, [pathname]);
 
   const logout = async () => {
+    // setCompanyStateId(null);
     localStorage.removeItem("authToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     localStorage.removeItem("userPermissions");
     localStorage.removeItem("userRoles");
     localStorage.removeItem("selectedCompany");
-    router.push("/");
+    window.location.href = "/";
   };
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);

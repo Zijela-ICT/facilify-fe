@@ -75,9 +75,9 @@ function Dashboard() {
   useEffect(() => {
     const storedCompanyId = localStorage.getItem("selectedCompany");
 
-    if (userCompanies.length > 0 && !storedCompanyId) {
+    if (userCompanies.length > 0 && !companyStateId) {
       const company = userCompanies;
-      const companyId = company && company[0]?.companyId;
+      const companyId = company && company[0].companyId;
       setCompanyStateId(companyId);
       localStorage.setItem("selectedCompany", companyId);
     }
