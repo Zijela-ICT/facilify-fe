@@ -63,7 +63,6 @@ function Dashboard() {
     const roles = response.data.data?.user?.roles || [];
     setUserRoles(roles);
     setUserCompanies(response.data.data?.userCompanies);
-
     const allPermissions = roles
       .map((role: any) => role.permissions || []) // Extract permissions from each role
       .flat(); // Flatten the array of arrays

@@ -158,8 +158,6 @@ export default function DashboardLayout({
   const handleNotificationClick = () => {
     setShowNotifications((prev) => !prev);
   };
-
-  console.log(loader, "what?");
   return (
     <>
       <ModalCompoenent

@@ -154,7 +154,7 @@ export const DataPermissionProvider = ({
   useEffect(() => {
     if (hydrated) {
       if (companyStateId !== null)
-        localStorage.setItem("selectedCompany", JSON.stringify(companyStateId));
+        localStorage.setItem("selectedCompany", (companyStateId));
     }
   }, [companyStateId, hydrated]);
 

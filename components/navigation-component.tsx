@@ -15,7 +15,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Select from "react-select";
 import PermissionGuard from "./auth/permission-protected-components";
 import ButtonComponent from "./button-component";
@@ -74,6 +74,13 @@ export default function Navigation() {
       )
     );
   };
+
+  const localCompany = localStorage.getItem("selectedCompany");
+  useEffect(() => {
+    if (localCompany) {
+      setCompanyStateId(Number(localCompany));
+    }
+  }, [localCompany]);
 
   const hasTenantRole = userRoles.some(
     (role: Role) => role.name === "TENANT_ROLE"
@@ -340,10 +347,6 @@ export default function Navigation() {
             <div className="w-full mt-3 p-2 bg-[#8C2F33] rounded-lg shadow-md">
               <Select
                 options={companyOptions}
-                // value={companyOptions?.find(
-                //   (option) => option.value === formData.company
-                // )}
-
                 value={companyOptions?.find(
                   (option) => option.value === companyStateId
                 )}
