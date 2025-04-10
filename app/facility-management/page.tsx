@@ -12,7 +12,7 @@ import ModalCompoenent from "@/components/modal-component";
 import TableComponent from "@/components/table-component";
 import FundWallet from "@/components/transaction/fund-wallet";
 import Payouts from "@/components/transaction/payout";
-import { default as CreateBulk, default as CreateBulkUser } from "@/components/user-management/create-bulk";
+import { default as CreateBulk } from "@/components/user-management/create-bulk";
 import { useDataPermission } from "@/context";
 import createAxiosInstance from "@/utils/api";
 import exportToCSV from "@/utils/exportCSV";
@@ -70,7 +70,7 @@ function FacilityManagement() {
   // Fetch data functions
   const getUsers = async () => {
     const response = await callGuardedEndpoint({
-      endpoint: `/users`,
+      endpoint: `/user-company-role/company-users`,
       requiredPermissions: ["read_users"],
     });
     setUsers(response?.data);
@@ -595,7 +595,7 @@ function FacilityManagement() {
       />
     ),
     createBulkFacility: (
-      <CreateBulkUser
+      <CreateBulk
         type="Facilities"
         activeRowId={activeRowId}
         setModalState={setCentralState}
@@ -603,7 +603,7 @@ function FacilityManagement() {
       />
     ),
     createBulkBlock: (
-      <CreateBulkUser
+      <CreateBulk
         type="Blocks"
         activeRowId={activeRowId}
         setModalState={setCentralState}
@@ -611,7 +611,7 @@ function FacilityManagement() {
       />
     ),
     createBulkUnit: (
-      <CreateBulkUser
+      <CreateBulk
         type="Units"
         activeRowId={activeRowId}
         setModalState={setCentralState}

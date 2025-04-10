@@ -43,7 +43,7 @@ function UserManagement() {
 
   const getUsersUnPaginated = async () => {
     const response = await axiosInstance.get(
-      `/users?search=${searchQuery}&&${filterQuery}`
+      `/user-company-role/company-users?search=${searchQuery}&&${filterQuery}`
     );
     exportToCSV(response.data.data, "users");
   };

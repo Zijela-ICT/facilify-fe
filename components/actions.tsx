@@ -440,7 +440,7 @@ const Actions: React.FC<UserActionsProps> = ({
                       />
                     )}
                     {/* for access-control */}
-                    {/* <li>
+                    <li>
                       <DropdownButtonComponent
                         text="Manage access control"
                         onClick={() =>
@@ -460,7 +460,7 @@ const Actions: React.FC<UserActionsProps> = ({
                           "read_access-control",
                         ]}
                       />
-                    </li> */}
+                    </li>
                   </li>
                 </ul>
               </ActionDropdownComponent>
